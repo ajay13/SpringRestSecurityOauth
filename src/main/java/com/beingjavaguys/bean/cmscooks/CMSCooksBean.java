@@ -1,5 +1,10 @@
 package com.beingjavaguys.bean.cmscooks;
 
+/**
+ * This is cook class
+ * @author amishra210
+ *
+ */
 public class CMSCooksBean {
 	private int id;
 	private String name;
