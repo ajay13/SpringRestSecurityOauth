@@ -34,11 +34,11 @@ public class CMSMenuController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public @ResponseBody
-	int addMenu(HttpServletResponse response,
+	int add(HttpServletResponse response,
 			@RequestBody CMSMenuBean cmsMenuBean) {
 		int nenuId = 0;
 		try {
-			nenuId = cmsMenuService.addMenu(cmsMenuBean, response);
+			nenuId = cmsMenuService.add(cmsMenuBean, response);
 		} catch (Exception e) {
 			response.setStatus(400);
 		}

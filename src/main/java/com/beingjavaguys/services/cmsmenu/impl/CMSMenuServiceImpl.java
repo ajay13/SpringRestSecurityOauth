@@ -44,7 +44,7 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 	ServletContext servletContext;
 
 	@Override
-	public int addMenu(CMSMenuBean cmsMenuBean, HttpServletResponse response) {
+	public int add(CMSMenuBean cmsMenuBean, HttpServletResponse response) {
 		CMSMenuData cmsMenuData = null;
 		cmsMenuData = cmsMenuUtility.populateCMSMenuData(cmsMenuBean);
 
@@ -56,12 +56,12 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 				response);
 		cmsMenuData.setCmsCooksData(cmsCooksData);
 
-		return cmsMenuDao.addMenu(cmsMenuData, response);
+		return cmsMenuDao.add(cmsMenuData, response);
 	}
 
 	@Override
-	public CMSMenuBean getMenu(int menuId) {
-		CMSMenuData cmsMenuData = cmsMenuDao.getMenu(menuId);
+	public CMSMenuBean get(int menuId) {
+		CMSMenuData cmsMenuData = cmsMenuDao.get(menuId);
 		CMSMenuBean cmsMenuBean = cmsMenuUtility
 				.populateCMSMenuBean(cmsMenuData);
 		return cmsMenuBean;
@@ -70,7 +70,7 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 	@Override
 	public String uploadMenuImage(String imageName, int menuId,
 			HttpServletResponse response) {
-		CMSMenuData cmsMenuData = cmsMenuDao.getMenu(menuId);
+		CMSMenuData cmsMenuData = cmsMenuDao.get(menuId);
 		String previousFilePath = cmsMenuData.getMenuImagePath();
 		cmsMenuData.setMenuImagePath(imageName);
 		cmsMenuDao.updateMenu(cmsMenuData, response);

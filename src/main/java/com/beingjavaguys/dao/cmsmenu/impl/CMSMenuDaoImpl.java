@@ -24,7 +24,7 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 	CoreDao coreDao;
 
 	@Override
-	public int addMenu(CMSMenuData cmsMenuData, HttpServletResponse response) {
+	public int add(CMSMenuData cmsMenuData, HttpServletResponse response) {
 
 		String getMenu = "select count(M) from CMSMenuData M where M.itemName=:itemName";
         int menuId = 0;
@@ -57,7 +57,7 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 	}
 
 	@Override
-	public CMSMenuData getMenu(int menuId) {
+	public CMSMenuData get(int menuId) {
 		String getMenu = "select M from CMSMenuData M where M.id=:menuId";
 		Session session = null;
 		Query query = null;
