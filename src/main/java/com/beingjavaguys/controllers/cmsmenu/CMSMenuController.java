@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.beingjavaguys.bean.cmsmenu.CMSCatagoryBean;
 import com.beingjavaguys.bean.cmsmenu.CMSMenuBean;
 import com.beingjavaguys.bean.generic.BeanList;
 import com.beingjavaguys.services.cmsmenu.CMSMenuService;
@@ -132,5 +133,29 @@ public class CMSMenuController {
 			response.setStatus(400);
 		}
 		return beanList;
+	}
+	
+	@RequestMapping(value = "/edit", method = RequestMethod.POST)
+	public @ResponseBody
+	int edit(HttpServletResponse response,
+			@RequestBody CMSMenuBean cmsMenuBean) {
+		int menuId= 0;
+		try {
+			menuId = cmsMenuService.edit(cmsMenuBean, response);
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+		return menuId;
+	}
+
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public @ResponseBody
+	void delete(HttpServletResponse response,
+			@RequestParam(required = true) int id) {
+		try {
+			cmsMenuService.delete(id, response);
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
 	}
 }

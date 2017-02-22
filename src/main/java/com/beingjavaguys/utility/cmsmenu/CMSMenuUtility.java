@@ -9,10 +9,12 @@ import com.beingjavaguys.models.cmsmenu.CMSMenuData;
 public class CMSMenuUtility {
 	public CMSMenuData populateCMSMenuData(CMSMenuBean cmsMenuBean) {
 		CMSMenuData cmsMenuData = new CMSMenuData();
-
+		
 		cmsMenuData.setItemName(cmsMenuBean.getItemName());
 		cmsMenuData.setDescription(cmsMenuBean.getDescription());
 		cmsMenuData.setPrice(cmsMenuBean.getPrice());
+		cmsMenuData.setId(cmsMenuBean.getId());
+		cmsMenuData.setMenuImagePath(cmsMenuBean.getMenuImagePath());
 		
 		return cmsMenuData;
 	}
@@ -24,6 +26,7 @@ public class CMSMenuUtility {
 		cmsMenuBean.setDescription(cmsMenuData.getDescription());
 		cmsMenuBean.setPrice(cmsMenuData.getPrice());
 		cmsMenuBean.setMenuImagePath(cmsMenuData.getMenuImagePath());
+		cmsMenuBean.setId(cmsMenuData.getId());
 		return cmsMenuBean;
 	}
 }

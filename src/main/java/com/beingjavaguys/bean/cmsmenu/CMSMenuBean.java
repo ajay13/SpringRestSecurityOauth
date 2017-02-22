@@ -2,6 +2,8 @@ package com.beingjavaguys.bean.cmsmenu;
 
 public class CMSMenuBean {
 
+	private int id;
+
 	private String itemName;
 
 	private String price;
@@ -70,6 +72,14 @@ public class CMSMenuBean {
 
 	public void setImage(byte[] image) {
 		this.image = image;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 }

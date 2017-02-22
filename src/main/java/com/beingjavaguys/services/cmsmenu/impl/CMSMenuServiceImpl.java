@@ -122,4 +122,27 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 		return objectListBean;
 	}
 
+	@Override
+	public void delete(int id, HttpServletResponse response) {
+		CMSMenuData cmsMenuData = null;
+		cmsMenuData = cmsMenuDao.get(id);
+		cmsMenuDao.delete(cmsMenuData, response);
+	}
+
+	@Override
+	public int edit(CMSMenuBean cmsMenuBean, HttpServletResponse response) {
+		CMSMenuData cmsMenuData = null;
+		cmsMenuData = cmsMenuUtility.populateCMSMenuData(cmsMenuBean);
+		
+		CMSMenuCatagoryData cmsMenuCatagoryData = cmsMenuCatagoryDao.get(
+				cmsMenuBean.getMenuCatagoryId(), response);
+		cmsMenuData.setCmsMenuCatagoryData(cmsMenuCatagoryData);
+
+		CMSCooksData cmsCooksData = cmsCooksDao.get(cmsMenuBean.getCooksId(),
+				response);
+		cmsMenuData.setCmsCooksData(cmsCooksData);
+		
+		return cmsMenuDao.edit(cmsMenuData, response);
+	}
+
 }

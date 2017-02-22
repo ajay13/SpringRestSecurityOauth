@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,6 @@ import com.beingjavaguys.bean.cmscooks.CMSCooksBean;
 import com.beingjavaguys.bean.generic.BeanList;
 import com.beingjavaguys.services.cmscooks.CMSCooksService;
 import com.beingjavaguys.utility.validations.RestValidation;
-import com.mysql.fabric.xmlrpc.base.Array;
 
 @Controller
 @RequestMapping("/cms/cooks")
@@ -28,7 +28,7 @@ public class CMSCooksContoller {
 
 	@Autowired
 	RestValidation restValidation;
-
+	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public @ResponseBody
 	void add(HttpServletResponse response,

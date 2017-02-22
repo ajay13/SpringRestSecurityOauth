@@ -13,4 +13,8 @@ public interface CMSMenuService {
 	String uploadMenuImage(String imageName, int menuId, HttpServletResponse response);
 
 	public BeanList get(int limit, int pageno, int cookId, int catagoryId, HttpServletResponse response);
+	
+	void delete(int id, HttpServletResponse response);
+	
+	int edit(CMSMenuBean cmsMenuBean, HttpServletResponse response);
 }

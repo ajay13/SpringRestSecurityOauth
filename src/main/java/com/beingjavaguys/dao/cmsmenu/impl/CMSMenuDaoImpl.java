@@ -27,7 +27,7 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 	public int add(CMSMenuData cmsMenuData, HttpServletResponse response) {
 
 		String getMenu = "select count(M) from CMSMenuData M where M.itemName=:itemName";
-        int menuId = 0;
+		int menuId = 0;
 		Session session = null;
 		Query query = null;
 		try {
@@ -52,7 +52,7 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 		} finally {
 			session.close();
 		}
-		
+
 		return menuId;
 	}
 
@@ -75,11 +75,10 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 		} finally {
 			session.close();
 		}
-		
+
 		return cmsMenuData;
 	}
 
-	
 	@Override
 	public void updateMenu(CMSMenuData cmsMenuData, HttpServletResponse response) {
 		Session session = null;
@@ -94,10 +93,10 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 			session.close();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object> get(int limit, int pageno,CMSCooksData cmsCooksData, CMSMenuCatagoryData cmsMenuCatagoryData) {
+	public List<Object> get(int limit, int pageno, CMSCooksData cmsCooksData, CMSMenuCatagoryData cmsMenuCatagoryData) {
 
 		List<Object> list = new ArrayList<Object>();
 		List<CMSMenuData> cmsMenuDataList = new ArrayList<CMSMenuData>();
@@ -137,6 +136,42 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 			session.close();
 		}
 		return list;
+	}
+
+	@Override
+	public int edit(CMSMenuData cmsMenuData, HttpServletResponse response) {
+		Session session = null;
+		int menuId = 0;
+		try {
+			session = coreDao.getSession();
+			session.beginTransaction();
+			session.saveOrUpdate(cmsMenuData);
+			session.getTransaction().commit();
+			menuId = cmsMenuData.getId();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return menuId;
+	}
+
+	@Override
+	public void delete(CMSMenuData cmsMenuData, HttpServletResponse response) {
+
+		Session session = null;
+		try {
+			session = coreDao.getSession();
+			session.beginTransaction();
+			session.delete(cmsMenuData);
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+
+		}
+
 	}
 
 }
