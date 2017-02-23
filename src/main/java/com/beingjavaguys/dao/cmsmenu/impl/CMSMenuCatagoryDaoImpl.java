@@ -175,4 +175,45 @@ public class CMSMenuCatagoryDaoImpl implements CMSMenuCatagoryDao {
 		return cmsMenuCatagoryDataList;
 	}
 
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CMSMenuCatagoryData> get() {
+		String getCatagory = "select C from CMSMenuCatagoryData C";
+		List<CMSMenuCatagoryData> cmsMenuCatagoryDataList = new ArrayList<CMSMenuCatagoryData>();
+		CMSMenuCatagoryData catagoryData = null;
+		Session session = null;
+		Query query = null;
+		try {
+			session = coreDao.getSession();
+			session.beginTransaction();
+			query = session.createQuery(getCatagory);
+			/*@SuppressWarnings("unchecked")
+			List<Object[]> catagories= (List<Object[]>)query.list();
+			for(Object[] catagory: catagories){
+		         Integer id = (Integer)catagory[0];
+		         String name = (String)catagory[1];
+		         String group = (String)catagory[2];
+		         int sequence = (Integer)catagory[3];
+		         
+		         catagoryData = new CMSMenuCatagoryData();
+		         catagoryData.setId(id);
+		         catagoryData.setName(name);
+		         catagoryData.setGroup(group);
+		         catagoryData.setSequence(sequence);
+		         
+		         cmsMenuCatagoryDataList.add(catagoryData);
+		     }*/
+			cmsMenuCatagoryDataList = query.list();
+			session.getTransaction().commit();
+
+			
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return cmsMenuCatagoryDataList;
+	}
+
 }

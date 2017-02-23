@@ -104,4 +104,16 @@ public class CMSMenuCatagoryController {
 		}
 		return cmsCatagoryBeanList;
 	}
+	
+	@RequestMapping(value = "/allcatagory", method = RequestMethod.GET)
+	public @ResponseBody
+	List<CMSCatagoryBean> get(HttpServletResponse response) {
+		List<CMSCatagoryBean> cmsCatagoryBeanList = new ArrayList<CMSCatagoryBean>();
+		try {
+			cmsCatagoryBeanList = cmsCatagoryService.get();
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+		return cmsCatagoryBeanList;
+	}
 }

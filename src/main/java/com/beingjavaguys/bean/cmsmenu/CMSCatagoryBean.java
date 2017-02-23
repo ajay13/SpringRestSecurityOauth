@@ -8,6 +8,10 @@ public class CMSCatagoryBean {
 
 	private String description;
 
+	private String groupName;
+
+	private int sequence;
+
 	public String getDescription() {
 		return description;
 	}
@@ -30,6 +34,22 @@ public class CMSCatagoryBean {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 
 }

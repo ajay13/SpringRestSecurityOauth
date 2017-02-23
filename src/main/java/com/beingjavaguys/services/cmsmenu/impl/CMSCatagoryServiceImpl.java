@@ -83,4 +83,16 @@ public class CMSCatagoryServiceImpl implements CMSCatagoryService{
 		return cmsCatagoryBeanList;
 	}
 
+	@Override
+	public List<CMSCatagoryBean> get() {
+		List<CMSCatagoryBean> cmsCatagoryBeanList = new ArrayList<CMSCatagoryBean>();
+		List<CMSMenuCatagoryData> cmsMenuCatagoryDataList = null;
+		cmsMenuCatagoryDataList = cmsMenuCatagoryDao.get();
+		for (CMSMenuCatagoryData cmsMenuCatagoryData : cmsMenuCatagoryDataList) {
+			CMSCatagoryBean cmsCatagoryBean =  cmsCatagoryUtility.populateCMSMenuCatagory(cmsMenuCatagoryData);
+			cmsCatagoryBeanList.add(cmsCatagoryBean);
+		}
+		return cmsCatagoryBeanList;
+	}
+
 }

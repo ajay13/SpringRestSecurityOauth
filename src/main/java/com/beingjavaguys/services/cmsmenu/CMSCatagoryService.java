@@ -19,4 +19,6 @@ public interface CMSCatagoryService {
 	void edit(CMSCatagoryBean cmsCatagoryBean, HttpServletResponse response);
 	
 	List<CMSCatagoryBean> get(String catagoryName, HttpServletResponse response);
+
+	List<CMSCatagoryBean> get();
 }

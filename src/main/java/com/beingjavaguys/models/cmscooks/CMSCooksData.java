@@ -1,11 +1,16 @@
 package com.beingjavaguys.models.cmscooks;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.beingjavaguys.models.cmsmenu.CMSMenuData;
 
 @Entity
 @Table(name = "cms_cooks")
@@ -32,6 +37,9 @@ public class CMSCooksData {
 
 	@Column(name = "address")
 	private String address;
+
+	@OneToMany(mappedBy = "cmsCooksData")
+	private List<CMSMenuData> cmsMenuDataList;
 
 	public int getId() {
 		return id;
@@ -87,6 +95,14 @@ public class CMSCooksData {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public List<CMSMenuData> getCmsMenuDataList() {
+		return cmsMenuDataList;
+	}
+
+	public void setCmsMenuDataList(List<CMSMenuData> cmsMenuDataList) {
+		this.cmsMenuDataList = cmsMenuDataList;
 	}
 
 }

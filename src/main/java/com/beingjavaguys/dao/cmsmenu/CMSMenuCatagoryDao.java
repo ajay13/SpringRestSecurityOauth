@@ -24,4 +24,5 @@ public interface CMSMenuCatagoryDao {
 	
 	public List<CMSMenuCatagoryData> get(String catagoryName, HttpServletResponse response);
 	
+	public List<CMSMenuCatagoryData> get();
 }

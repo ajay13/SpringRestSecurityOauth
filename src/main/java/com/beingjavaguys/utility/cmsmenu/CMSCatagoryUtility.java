@@ -13,6 +13,8 @@ public class CMSCatagoryUtility {
 		cmsMenuCatagoryData.setId(cmsCatagoryBean.getId());
 		cmsMenuCatagoryData.setName(cmsCatagoryBean.getName());
 		cmsMenuCatagoryData.setDescription(cmsCatagoryBean.getDescription());
+		cmsMenuCatagoryData.setGroupName(cmsCatagoryBean.getGroupName());
+		cmsMenuCatagoryData.setSequence(cmsCatagoryBean.getSequence());
 		return cmsMenuCatagoryData;
 	}
 
@@ -22,6 +24,8 @@ public class CMSCatagoryUtility {
 		cmsCatagoryBean.setId(cmsMenuCatagoryData.getId());
 		cmsCatagoryBean.setName(cmsMenuCatagoryData.getName());
 		cmsCatagoryBean.setDescription(cmsMenuCatagoryData.getDescription());
+		cmsCatagoryBean.setGroupName(cmsMenuCatagoryData.getGroupName());
+		cmsCatagoryBean.setSequence(cmsMenuCatagoryData.getSequence());
 		return cmsCatagoryBean;
 	}
 }
