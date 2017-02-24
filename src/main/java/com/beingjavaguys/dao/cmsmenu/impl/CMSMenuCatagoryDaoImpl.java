@@ -215,5 +215,29 @@ public class CMSMenuCatagoryDaoImpl implements CMSMenuCatagoryDao {
 		}
 		return cmsMenuCatagoryDataList;
 	}
+	
+	@Override
+	public void grouppingAndSeq(List<Integer> catagoryIds, String groupName){
+		Session session = null;
+		try {
+			session = coreDao.getSession();
+			session.beginTransaction();
+			int i = 1;
+			for(Integer catagroryId : catagoryIds){
+				CMSMenuCatagoryData cmsMenuCatagoryData = (CMSMenuCatagoryData) session.get(CMSMenuCatagoryData.class, catagroryId);
+				cmsMenuCatagoryData.setGroupName(groupName);
+				cmsMenuCatagoryData.setSequence(i);
+				session.getTransaction().commit();
+				i++;
+			}
+			
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+
+		}
+		
+	}
 
 }

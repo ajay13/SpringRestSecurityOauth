@@ -21,4 +21,6 @@ public interface CMSCatagoryService {
 	List<CMSCatagoryBean> get(String catagoryName, HttpServletResponse response);
 
 	List<CMSCatagoryBean> get();
+	
+	void grouppingAndSeq(List<Integer> catagoryIds, String groupName);
 }

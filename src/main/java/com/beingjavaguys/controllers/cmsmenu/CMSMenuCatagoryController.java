@@ -116,4 +116,16 @@ public class CMSMenuCatagoryController {
 		}
 		return cmsCatagoryBeanList;
 	}
+	
+	@RequestMapping(value = "/groupingAndSeq", method = RequestMethod.POST)
+	public @ResponseBody
+	void groupingAndSeq(HttpServletResponse response,
+			@RequestParam(required = true) List<Integer> ids,
+			@RequestParam(required = true) String groupName) {
+		try {
+			cmsCatagoryService.grouppingAndSeq(ids,groupName);
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+	}
 }

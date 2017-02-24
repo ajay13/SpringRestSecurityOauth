@@ -94,5 +94,10 @@ public class CMSCatagoryServiceImpl implements CMSCatagoryService{
 		}
 		return cmsCatagoryBeanList;
 	}
+	
+	@Override
+	public void grouppingAndSeq(List<Integer> catagoryIds, String groupName) {
+		
+	}
 
 }
