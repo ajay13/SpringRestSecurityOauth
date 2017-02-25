@@ -97,7 +97,7 @@ public class CMSCatagoryServiceImpl implements CMSCatagoryService{
 	
 	@Override
 	public void grouppingAndSeq(List<Integer> catagoryIds, String groupName) {
-		
+		cmsMenuCatagoryDao.grouppingAndSeq(catagoryIds, groupName);
 	}
 
 }

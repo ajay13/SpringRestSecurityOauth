@@ -221,9 +221,9 @@ public class CMSMenuCatagoryDaoImpl implements CMSMenuCatagoryDao {
 		Session session = null;
 		try {
 			session = coreDao.getSession();
-			session.beginTransaction();
 			int i = 1;
 			for(Integer catagroryId : catagoryIds){
+				session.beginTransaction();
 				CMSMenuCatagoryData cmsMenuCatagoryData = (CMSMenuCatagoryData) session.get(CMSMenuCatagoryData.class, catagroryId);
 				cmsMenuCatagoryData.setGroupName(groupName);
 				cmsMenuCatagoryData.setSequence(i);
