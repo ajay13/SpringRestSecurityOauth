@@ -1,5 +1,8 @@
 package com.beingjavaguys.bean.cmsmenu;
 
+import java.util.List;
+import java.util.Map;
+
 public class CMSCatagoryBean {
 
 	private int id;

@@ -15,13 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.beingjavaguys.bean.cmsmenu.CMSMenuBean;
+import com.beingjavaguys.bean.cmsmenu.CMSMenuPriceBean;
 import com.beingjavaguys.bean.generic.BeanList;
 import com.beingjavaguys.dao.cmscooks.CMSCooksDao;
 import com.beingjavaguys.dao.cmsmenu.CMSMenuCatagoryDao;
 import com.beingjavaguys.dao.cmsmenu.CMSMenuDao;
+import com.beingjavaguys.dao.cmsmenu.CMSMenuUnitDao;
 import com.beingjavaguys.models.cmscooks.CMSCooksData;
 import com.beingjavaguys.models.cmsmenu.CMSMenuCatagoryData;
 import com.beingjavaguys.models.cmsmenu.CMSMenuData;
+import com.beingjavaguys.models.cmsmenu.CMSMenuPriceData;
+import com.beingjavaguys.models.cmsmenu.CMSMenuUnitData;
 import com.beingjavaguys.services.cmsmenu.CMSMenuService;
 import com.beingjavaguys.utility.cmsmenu.CMSMenuUtility;
 
@@ -42,10 +46,17 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 
 	@Autowired
 	ServletContext servletContext;
+	
+	@Autowired
+	CMSMenuUnitDao cmsMenuUnitDao;
 
+	@SuppressWarnings("null")
 	@Override
 	public int add(CMSMenuBean cmsMenuBean, HttpServletResponse response) {
 		CMSMenuData cmsMenuData = null;
+		CMSMenuPriceData cmsMenuPriceData = null;
+		CMSMenuUnitData cmsMenuUnitData = null;
+		
 		cmsMenuData = cmsMenuUtility.populateCMSMenuData(cmsMenuBean);
 
 		CMSMenuCatagoryData cmsMenuCatagoryData = cmsMenuCatagoryDao.get(
@@ -55,6 +66,13 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 		CMSCooksData cmsCooksData = cmsCooksDao.get(cmsMenuBean.getCooksId(),
 				response);
 		cmsMenuData.setCmsCooksData(cmsCooksData);
+		
+		for(CMSMenuPriceBean cmsMenuPriceBean : cmsMenuBean.getCmsMenuPriceBeanList()){
+			cmsMenuUnitData = cmsMenuUnitDao.get(cmsMenuPriceBean.getUnitName());
+			cmsMenuPriceData.setCmsMenuUnitData(cmsMenuUnitData);
+			cmsMenuPriceData.setPrice(cmsMenuPriceBean.getPrice());
+			cmsMenuData.setCmsMenuPriceData(cmsMenuPriceData);
+		}
 
 		return cmsMenuDao.add(cmsMenuData, response);
 	}

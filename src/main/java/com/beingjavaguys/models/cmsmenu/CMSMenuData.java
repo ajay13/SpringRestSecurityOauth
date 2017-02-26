@@ -23,9 +23,6 @@ public class CMSMenuData {
 	@Column(name = "item_name")
 	private String itemName;
 
-	@Column(name = "price")
-	private String price;
-
 	@Column(name = "description")
 	private String description;
 
@@ -39,6 +36,13 @@ public class CMSMenuData {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "menu_catagory_id", nullable = false)
 	private CMSMenuCatagoryData cmsMenuCatagoryData;
+
+	@Column(name = "unit")
+	private boolean unit;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "menu_price_id", nullable = false)
+	private CMSMenuPriceData cmsMenuPriceData;
 
 	public int getId() {
 		return id;
@@ -54,14 +58,6 @@ public class CMSMenuData {
 
 	public void setItemName(String itemName) {
 		this.itemName = itemName;
-	}
-
-	public String getPrice() {
-		return price;
-	}
-
-	public void setPrice(String price) {
-		this.price = price;
 	}
 
 	public String getDescription() {
@@ -94,6 +90,22 @@ public class CMSMenuData {
 
 	public void setMenuImagePath(String menuImagePath) {
 		this.menuImagePath = menuImagePath;
+	}
+
+	public boolean isUnit() {
+		return unit;
+	}
+
+	public void setUnit(boolean unit) {
+		this.unit = unit;
+	}
+
+	public CMSMenuPriceData getCmsMenuPriceData() {
+		return cmsMenuPriceData;
+	}
+
+	public void setCmsMenuPriceData(CMSMenuPriceData cmsMenuPriceData) {
+		this.cmsMenuPriceData = cmsMenuPriceData;
 	}
 
 }

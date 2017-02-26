@@ -123,11 +123,6 @@ public class CMSMenuCatagoryController {
 			@RequestParam(required = true) List<Integer> ids,
 			@RequestParam(required = true) String groupName) {
 		try {
-			for(Integer i:ids){
-			    System.out.println(i);
-			}
-			 System.out.println(groupName);
-
 			cmsCatagoryService.grouppingAndSeq(ids,groupName);
 		} catch (Exception e) {
 			response.setStatus(400);
