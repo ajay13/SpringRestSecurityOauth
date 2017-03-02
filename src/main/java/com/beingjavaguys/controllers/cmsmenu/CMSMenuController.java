@@ -1,6 +1,7 @@
 package com.beingjavaguys.controllers.cmsmenu;
 
 import java.io.File;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.beingjavaguys.bean.cmsmenu.CMSCatagoryBean;
 import com.beingjavaguys.bean.cmsmenu.CMSMenuBean;
+import com.beingjavaguys.bean.cmsmenu.CMSMenuPriceBean;
+import com.beingjavaguys.bean.cmsmenu.CMSMenuUnitBean;
 import com.beingjavaguys.bean.generic.BeanList;
 import com.beingjavaguys.services.cmsmenu.CMSMenuService;
 import com.beingjavaguys.utility.validations.RestValidation;
@@ -40,6 +43,7 @@ public class CMSMenuController {
 		int nenuId = 0;
 		try {
 			nenuId = cmsMenuService.add(cmsMenuBean, response);
+			System.out.println(cmsMenuBean);
 		} catch (Exception e) {
 			response.setStatus(400);
 		}
@@ -157,5 +161,17 @@ public class CMSMenuController {
 		} catch (Exception e) {
 			response.setStatus(400);
 		}
+	}
+	
+	@RequestMapping(value = "/getMenuUnit", method = RequestMethod.GET)
+	public @ResponseBody
+	List<CMSMenuUnitBean> getMenuUnit(HttpServletResponse response) {
+		List<CMSMenuUnitBean> cmsMenuUnitBeanList = null;
+		try {
+			cmsMenuUnitBeanList = cmsMenuService.getMenuUnit();
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+		return cmsMenuUnitBeanList;
 	}
 }

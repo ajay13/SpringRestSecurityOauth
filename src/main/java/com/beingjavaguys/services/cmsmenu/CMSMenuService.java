@@ -1,8 +1,11 @@
 package com.beingjavaguys.services.cmsmenu;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import com.beingjavaguys.bean.cmsmenu.CMSMenuBean;
+import com.beingjavaguys.bean.cmsmenu.CMSMenuUnitBean;
 import com.beingjavaguys.bean.generic.BeanList;
 
 public interface CMSMenuService {
@@ -17,4 +20,6 @@ public interface CMSMenuService {
 	void delete(int id, HttpServletResponse response);
 	
 	int edit(CMSMenuBean cmsMenuBean, HttpServletResponse response);
+	
+	List<CMSMenuUnitBean> getMenuUnit();
 }

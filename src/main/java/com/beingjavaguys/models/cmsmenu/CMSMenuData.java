@@ -1,5 +1,8 @@
 package com.beingjavaguys.models.cmsmenu;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -29,7 +34,7 @@ public class CMSMenuData {
 	@Column(name = "menu_image_path")
 	private String menuImagePath;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "cook_id", nullable = false)
 	private CMSCooksData cmsCooksData;
 
@@ -38,11 +43,11 @@ public class CMSMenuData {
 	private CMSMenuCatagoryData cmsMenuCatagoryData;
 
 	@Column(name = "unit")
-	private boolean unit;
+	private int unit;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "menu_price_id", nullable = false)
-	private CMSMenuPriceData cmsMenuPriceData;
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "cms_menu_price_mapping", joinColumns = { @JoinColumn(name = "menu_id") }, inverseJoinColumns = { @JoinColumn(name = "unit_id") })
+	private List<CMSMenuPriceData> cmsMenuPriceDataList;
 
 	public int getId() {
 		return id;
@@ -92,20 +97,21 @@ public class CMSMenuData {
 		this.menuImagePath = menuImagePath;
 	}
 
-	public boolean isUnit() {
+	public List<CMSMenuPriceData> getCmsMenuPriceDataList() {
+		return cmsMenuPriceDataList;
+	}
+
+	public void setCmsMenuPriceDataList(
+			List<CMSMenuPriceData> cmsMenuPriceDataList) {
+		this.cmsMenuPriceDataList = cmsMenuPriceDataList;
+	}
+
+	public int getUnit() {
 		return unit;
 	}
 
-	public void setUnit(boolean unit) {
+	public void setUnit(int unit) {
 		this.unit = unit;
-	}
-
-	public CMSMenuPriceData getCmsMenuPriceData() {
-		return cmsMenuPriceData;
-	}
-
-	public void setCmsMenuPriceData(CMSMenuPriceData cmsMenuPriceData) {
-		this.cmsMenuPriceData = cmsMenuPriceData;
 	}
 
 }

@@ -101,8 +101,24 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 		List<Object> list = new ArrayList<Object>();
 		List<CMSMenuData> cmsMenuDataList = new ArrayList<CMSMenuData>();
 
-		String getMenu = " select M from CMSMenuData M where M.cmsCooksData.id=:cookId AND M.cmsMenuCatagoryData.id=:catagoryId";
-		String getMenuCount = "select count(M) from CMSMenuData M where M.cmsCooksData.id=:cookId AND M.cmsMenuCatagoryData.id=:catagoryId";
+		String getMenuCount = "";
+		String getMenu = "";
+		
+		if(cmsCooksData == null && cmsMenuCatagoryData!=null){
+			getMenu = " select M from CMSMenuData M where  M.cmsMenuCatagoryData.id=:catagoryId";
+			getMenuCount = "select count(M) from CMSMenuData M where  M.cmsMenuCatagoryData.id=:catagoryId";
+		}
+		
+		if(cmsCooksData != null && cmsMenuCatagoryData==null){
+			getMenu = " select M from CMSMenuData M where M.cmsCooksData.id=:cookId ";
+			getMenuCount = "select count(M) from CMSMenuData M where M.cmsCooksData.id=:cookId ";
+		}
+		
+		if(cmsCooksData != null && cmsMenuCatagoryData!=null){
+			getMenu = " select M from CMSMenuData M where M.cmsCooksData.id=:cookId AND M.cmsMenuCatagoryData.id=:catagoryId";
+			getMenuCount = "select count(M) from CMSMenuData M where M.cmsCooksData.id=:cookId AND M.cmsMenuCatagoryData.id=:catagoryId";
+		}
+		
 
 		Session session = null;
 		Query query = null;
@@ -110,15 +126,38 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 			session = coreDao.getSession();
 			session.beginTransaction();
 			query = session.createQuery(getMenu);
-			query.setParameter("cookId", cmsCooksData.getId());
-			query.setParameter("catagoryId", cmsMenuCatagoryData.getId());
+			
+			if(cmsCooksData != null && cmsMenuCatagoryData!=null){
+				query.setParameter("cookId", cmsCooksData.getId());
+				query.setParameter("catagoryId", cmsMenuCatagoryData.getId());
+			}
+			
+			if(cmsCooksData != null && cmsMenuCatagoryData==null){
+				query.setParameter("cookId", cmsCooksData.getId());
+			}
+			
+			if(cmsCooksData == null && cmsMenuCatagoryData!=null){
+				query.setParameter("catagoryId", cmsMenuCatagoryData.getId());
+			}
+
 			query.setFirstResult((pageno * limit) - limit);
 			query.setMaxResults(limit);
 			cmsMenuDataList = query.list();
 
 			query = session.createQuery(getMenuCount);
-			query.setParameter("cookId", cmsCooksData.getId());
-			query.setParameter("catagoryId", cmsMenuCatagoryData.getId());
+			
+			if(cmsCooksData != null && cmsMenuCatagoryData!=null){
+				query.setParameter("cookId", cmsCooksData.getId());
+				query.setParameter("catagoryId", cmsMenuCatagoryData.getId());
+			}
+			
+			if(cmsCooksData != null && cmsMenuCatagoryData==null){
+				query.setParameter("cookId", cmsCooksData.getId());
+			}
+			
+			if(cmsCooksData == null && cmsMenuCatagoryData!=null){
+				query.setParameter("catagoryId", cmsMenuCatagoryData.getId());
+			}
 			Long count = (Long) query.uniqueResult();
 
 			int pagination = (int) (count / limit);

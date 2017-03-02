@@ -18,7 +18,7 @@ public class CMSMenuBean {
 
 	private byte[] image;
 
-	private boolean unit;
+	private int unit;
 
 	private List<CMSMenuPriceBean> cmsMenuPriceBeanList;
 
@@ -78,14 +78,6 @@ public class CMSMenuBean {
 		this.id = id;
 	}
 
-	public boolean isUnit() {
-		return unit;
-	}
-
-	public void setUnit(boolean unit) {
-		this.unit = unit;
-	}
-
 	public List<CMSMenuPriceBean> getCmsMenuPriceBeanList() {
 		return cmsMenuPriceBeanList;
 	}
@@ -93,6 +85,14 @@ public class CMSMenuBean {
 	public void setCmsMenuPriceBeanList(
 			List<CMSMenuPriceBean> cmsMenuPriceBeanList) {
 		this.cmsMenuPriceBeanList = cmsMenuPriceBeanList;
+	}
+
+	public int getUnit() {
+		return unit;
+	}
+
+	public void setUnit(int unit) {
+		this.unit = unit;
 	}
 
 }

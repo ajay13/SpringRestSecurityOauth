@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.beingjavaguys.bean.cmsmenu.CMSMenuBean;
 import com.beingjavaguys.bean.cmsmenu.CMSMenuPriceBean;
+import com.beingjavaguys.bean.cmsmenu.CMSMenuUnitBean;
 import com.beingjavaguys.bean.generic.BeanList;
 import com.beingjavaguys.dao.cmscooks.CMSCooksDao;
 import com.beingjavaguys.dao.cmsmenu.CMSMenuCatagoryDao;
@@ -54,6 +55,7 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 	@Override
 	public int add(CMSMenuBean cmsMenuBean, HttpServletResponse response) {
 		CMSMenuData cmsMenuData = null;
+		List<CMSMenuPriceData> cmsMenuPriceDataList = new ArrayList<CMSMenuPriceData>();
 		CMSMenuPriceData cmsMenuPriceData = null;
 		CMSMenuUnitData cmsMenuUnitData = null;
 		
@@ -69,10 +71,12 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 		
 		for(CMSMenuPriceBean cmsMenuPriceBean : cmsMenuBean.getCmsMenuPriceBeanList()){
 			cmsMenuUnitData = cmsMenuUnitDao.get(cmsMenuPriceBean.getUnitName());
+			cmsMenuPriceData = new CMSMenuPriceData();
 			cmsMenuPriceData.setCmsMenuUnitData(cmsMenuUnitData);
 			cmsMenuPriceData.setPrice(cmsMenuPriceBean.getPrice());
-			cmsMenuData.setCmsMenuPriceData(cmsMenuPriceData);
+			cmsMenuPriceDataList.add(cmsMenuPriceData);
 		}
+		cmsMenuData.setCmsMenuPriceDataList(cmsMenuPriceDataList);
 
 		return cmsMenuDao.add(cmsMenuData, response);
 	}
@@ -100,9 +104,11 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 	public BeanList get(int limit, int pageno, int cookId, int catagoryId,
 			HttpServletResponse response) {
 		BeanList objectListBean = new BeanList();
+		List<CMSMenuPriceBean> cmsMenuPriceBeanList =null;
 		List<CMSMenuBean> cmsMenuBeanList = new ArrayList<CMSMenuBean>();
 		List<CMSMenuData> cmsMenuDataList = null;
-
+		CMSMenuPriceBean cmsMenuPriceBean = null;
+		
 		CMSCooksData cmsCooksData = cmsCooksDao.get(cookId, response);
 		CMSMenuCatagoryData cmsMenuCatagoryData = cmsMenuCatagoryDao.get(
 				catagoryId, response);
@@ -116,6 +122,16 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 		for (CMSMenuData cmsMenuData : cmsMenuDataList) {
 			CMSMenuBean cmsMenuBean = cmsMenuUtility
 					.populateCMSMenuBean(cmsMenuData);
+			cmsMenuPriceBeanList = new ArrayList<CMSMenuPriceBean>();
+			for(CMSMenuPriceData cmsMenuPriceData : cmsMenuData.getCmsMenuPriceDataList()){
+				cmsMenuPriceBean = new CMSMenuPriceBean();
+				cmsMenuPriceBean.setId(cmsMenuPriceData.getId());
+				cmsMenuPriceBean.setPrice(cmsMenuPriceData.getPrice());
+				cmsMenuPriceBean.setUnitName(cmsMenuPriceData.getCmsMenuUnitData().getUnit());
+				cmsMenuPriceBeanList.add(cmsMenuPriceBean);
+			}
+			cmsMenuBean.setCmsMenuPriceBeanList(cmsMenuPriceBeanList);
+			
 			String rootPath = servletContext.getRealPath("/");
 			String folderPath = rootPath + File.separator + "image"
 					+ File.separator + "menu_item" + File.separator;
@@ -161,6 +177,18 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 		cmsMenuData.setCmsCooksData(cmsCooksData);
 		
 		return cmsMenuDao.edit(cmsMenuData, response);
+	}
+
+	@Override
+	public List<CMSMenuUnitBean> getMenuUnit() {
+		List<CMSMenuUnitBean> cmsMenuUnitBeanList = new ArrayList<CMSMenuUnitBean>();
+		CMSMenuUnitBean cmsMenuUnitBean = null;
+		List<CMSMenuUnitData> cmsMenuUnitDataList = cmsMenuUnitDao.getMenuUnit();
+		for(CMSMenuUnitData cmsMenuUnitData : cmsMenuUnitDataList){
+		    cmsMenuUnitBean = cmsMenuUtility.populateCMSMenuUnitBean(cmsMenuUnitData);
+		    cmsMenuUnitBeanList.add(cmsMenuUnitBean);
+		}
+		return cmsMenuUnitBeanList;
 	}
 
 }
