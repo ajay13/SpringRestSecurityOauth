@@ -2,8 +2,9 @@ package com.beingjavaguys.bean.cmscooks;
 
 /**
  * This is cook class
+ * 
  * @author amishra210
- *
+ * 
  */
 public class CMSCooksBean {
 	private int id;
@@ -13,6 +14,10 @@ public class CMSCooksBean {
 	private String gender;
 	private String mobileno;
 	private String address;
+	private int availability;
+	private String cast;
+	private byte[] image;
+	private String imagePath;
 
 	public int getId() {
 		return id;
@@ -70,11 +75,36 @@ public class CMSCooksBean {
 		this.address = address;
 	}
 
-	@Override
-	public String toString() {
-		return "CMSCooksBean [name=" + name + ", description=" + description
-				+ ", specility=" + specility + ", gender=" + gender
-				+ ", mobileno=" + mobileno + ", address=" + address + "]";
+	public String getCast() {
+		return cast;
+	}
+
+	public void setCast(String cast) {
+		this.cast = cast;
+	}
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+
+	public int getAvailability() {
+		return availability;
+	}
+
+	public void setAvailability(int availability) {
+		this.availability = availability;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
 	}
 
 }

@@ -15,11 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.beingjavaguys.bean.cmsmenu.CMSCatagoryBean;
 import com.beingjavaguys.bean.cmsmenu.CMSMenuBean;
-import com.beingjavaguys.bean.cmsmenu.CMSMenuPriceBean;
 import com.beingjavaguys.bean.cmsmenu.CMSMenuUnitBean;
 import com.beingjavaguys.bean.generic.BeanList;
+import com.beingjavaguys.bean.other.CookSpecialityBean;
 import com.beingjavaguys.services.cmsmenu.CMSMenuService;
 import com.beingjavaguys.utility.validations.RestValidation;
 
@@ -32,14 +31,13 @@ public class CMSMenuController {
 
 	@Autowired
 	private ServletContext servletContext;
-	
+
 	@Autowired
 	RestValidation restValidation;
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public @ResponseBody
-	int add(HttpServletResponse response,
-			@RequestBody CMSMenuBean cmsMenuBean) {
+	int add(HttpServletResponse response, @RequestBody CMSMenuBean cmsMenuBean) {
 		int nenuId = 0;
 		try {
 			nenuId = cmsMenuService.add(cmsMenuBean, response);
@@ -87,8 +85,7 @@ public class CMSMenuController {
 			response.setStatus(400);
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/menuList", method = RequestMethod.GET)
 	public @ResponseBody
 	BeanList get(HttpServletResponse response,
@@ -115,7 +112,7 @@ public class CMSMenuController {
 				restValidation.numberFormatValidation(pageno);
 				pagenoInt = Integer.parseInt(pageno);
 			}
-			
+
 			if (cookId == null || cookId.equalsIgnoreCase("null")
 					|| cookId.equals("")) {
 				cook_id = 0;
@@ -123,7 +120,7 @@ public class CMSMenuController {
 				restValidation.numberFormatValidation(cookId);
 				cook_id = Integer.parseInt(cookId);
 			}
-			
+
 			if (catagoryId == null || catagoryId.equalsIgnoreCase("null")
 					|| catagoryId.equals("")) {
 				catagory_id = 0;
@@ -132,18 +129,18 @@ public class CMSMenuController {
 				catagory_id = Integer.parseInt(catagoryId);
 			}
 
-			beanList = cmsMenuService.get(limitInt, pagenoInt,cook_id,catagory_id,response);
+			beanList = cmsMenuService.get(limitInt, pagenoInt, cook_id,
+					catagory_id, response);
 		} catch (Exception e) {
 			response.setStatus(400);
 		}
 		return beanList;
 	}
-	
+
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)
 	public @ResponseBody
-	int edit(HttpServletResponse response,
-			@RequestBody CMSMenuBean cmsMenuBean) {
-		int menuId= 0;
+	int edit(HttpServletResponse response, @RequestBody CMSMenuBean cmsMenuBean) {
+		int menuId = 0;
 		try {
 			menuId = cmsMenuService.edit(cmsMenuBean, response);
 		} catch (Exception e) {
@@ -162,7 +159,7 @@ public class CMSMenuController {
 			response.setStatus(400);
 		}
 	}
-	
+
 	@RequestMapping(value = "/getMenuUnit", method = RequestMethod.GET)
 	public @ResponseBody
 	List<CMSMenuUnitBean> getMenuUnit(HttpServletResponse response) {
@@ -173,5 +170,91 @@ public class CMSMenuController {
 			response.setStatus(400);
 		}
 		return cmsMenuUnitBeanList;
+	}
+
+	@RequestMapping(value = "/allmenu", method = RequestMethod.GET)
+	public @ResponseBody
+	List<CMSMenuBean> get(HttpServletResponse response,
+			@RequestParam(required = false) String cookId,
+			@RequestParam(required = false) String specialityId) {
+		int cook_id = 0, speciality_id = 0;
+		List<CMSMenuBean> cmsMenuBeanList = null;
+		try {
+			if (cookId == null || cookId.equalsIgnoreCase("null")
+					|| cookId.equals("")) {
+				cook_id = 0;
+			} else {
+				restValidation.numberFormatValidation(cookId);
+				cook_id = Integer.parseInt(cookId);
+			}
+
+			if (specialityId == null || specialityId.equalsIgnoreCase("null")
+					|| specialityId.equals("")) {
+				speciality_id = 0;
+			} else {
+				restValidation.numberFormatValidation(specialityId);
+				speciality_id = Integer.parseInt(specialityId);
+			}
+
+			cmsMenuBeanList = cmsMenuService.get(cook_id, speciality_id,
+					response);
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+		return cmsMenuBeanList;
+	}
+
+	@RequestMapping(value = "/addSpeciality", method = RequestMethod.POST)
+	public @ResponseBody
+	void addSpeciality(HttpServletResponse response,
+			@RequestBody CookSpecialityBean cookSpecialityBean) {
+		try {
+			cmsMenuService.addSpeciality(cookSpecialityBean, response);
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+	}
+
+	@RequestMapping(value = "/getCookSpeciality", method = RequestMethod.GET)
+	public @ResponseBody
+	CookSpecialityBean getCookSpeciality(HttpServletResponse response,
+			@RequestParam(required = false) String cookId,
+			@RequestParam(required = false) String speciality) {
+		int cook_id = 0;
+		CookSpecialityBean cookSpecialityBean = null;
+		try {
+			if (cookId == null || cookId.equalsIgnoreCase("null")
+					|| cookId.equals("")) {
+				cook_id = 0;
+			} else {
+				restValidation.numberFormatValidation(cookId);
+				cook_id = Integer.parseInt(cookId);
+			}
+			cookSpecialityBean = cmsMenuService.getCookSpeciality(cook_id,
+					speciality, response);
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+		return cookSpecialityBean;
+	}
+
+	@RequestMapping(value = "/deleteCookSpeciality", method = RequestMethod.POST)
+	public @ResponseBody
+	void deleteCookSpeciality(HttpServletResponse response,
+			@RequestParam(required = false) String cookId,
+			@RequestParam(required = false) String speciality) {
+		int cook_id = 0;
+		try {
+			if (cookId == null || cookId.equalsIgnoreCase("null")
+					|| cookId.equals("")) {
+				cook_id = 0;
+			} else {
+				restValidation.numberFormatValidation(cookId);
+				cook_id = Integer.parseInt(cookId);
+			}
+			cmsMenuService.deleteCookSpeciality(cook_id, speciality, response);
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
 	}
 }

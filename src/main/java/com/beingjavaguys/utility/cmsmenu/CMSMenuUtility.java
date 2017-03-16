@@ -30,6 +30,7 @@ public class CMSMenuUtility {
 		cmsMenuBean.setDescription(cmsMenuData.getDescription());
 		cmsMenuBean.setMenuImagePath(cmsMenuData.getMenuImagePath());
 		cmsMenuBean.setId(cmsMenuData.getId());
+		cmsMenuBean.setUnit(cmsMenuData.getUnit());
 		return cmsMenuBean;
 	}
 	

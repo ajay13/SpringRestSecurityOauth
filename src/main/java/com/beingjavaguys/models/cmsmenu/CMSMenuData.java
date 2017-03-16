@@ -38,7 +38,7 @@ public class CMSMenuData {
 	@JoinColumn(name = "cook_id", nullable = false)
 	private CMSCooksData cmsCooksData;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "menu_catagory_id", nullable = false)
 	private CMSMenuCatagoryData cmsMenuCatagoryData;
 

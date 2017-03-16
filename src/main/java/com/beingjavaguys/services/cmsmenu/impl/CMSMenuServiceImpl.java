@@ -18,11 +18,14 @@ import com.beingjavaguys.bean.cmsmenu.CMSMenuBean;
 import com.beingjavaguys.bean.cmsmenu.CMSMenuPriceBean;
 import com.beingjavaguys.bean.cmsmenu.CMSMenuUnitBean;
 import com.beingjavaguys.bean.generic.BeanList;
+import com.beingjavaguys.bean.other.CookSpecialityBean;
 import com.beingjavaguys.dao.cmscooks.CMSCooksDao;
 import com.beingjavaguys.dao.cmsmenu.CMSMenuCatagoryDao;
 import com.beingjavaguys.dao.cmsmenu.CMSMenuDao;
 import com.beingjavaguys.dao.cmsmenu.CMSMenuUnitDao;
 import com.beingjavaguys.models.cmscooks.CMSCooksData;
+import com.beingjavaguys.models.cmscooks.CMSCooksSpecialityData;
+import com.beingjavaguys.models.cmscooks.CookSpecialityMenuData;
 import com.beingjavaguys.models.cmsmenu.CMSMenuCatagoryData;
 import com.beingjavaguys.models.cmsmenu.CMSMenuData;
 import com.beingjavaguys.models.cmsmenu.CMSMenuPriceData;
@@ -47,18 +50,17 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 
 	@Autowired
 	ServletContext servletContext;
-	
+
 	@Autowired
 	CMSMenuUnitDao cmsMenuUnitDao;
 
-	@SuppressWarnings("null")
 	@Override
 	public int add(CMSMenuBean cmsMenuBean, HttpServletResponse response) {
 		CMSMenuData cmsMenuData = null;
 		List<CMSMenuPriceData> cmsMenuPriceDataList = new ArrayList<CMSMenuPriceData>();
 		CMSMenuPriceData cmsMenuPriceData = null;
 		CMSMenuUnitData cmsMenuUnitData = null;
-		
+
 		cmsMenuData = cmsMenuUtility.populateCMSMenuData(cmsMenuBean);
 
 		CMSMenuCatagoryData cmsMenuCatagoryData = cmsMenuCatagoryDao.get(
@@ -68,9 +70,11 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 		CMSCooksData cmsCooksData = cmsCooksDao.get(cmsMenuBean.getCooksId(),
 				response);
 		cmsMenuData.setCmsCooksData(cmsCooksData);
-		
-		for(CMSMenuPriceBean cmsMenuPriceBean : cmsMenuBean.getCmsMenuPriceBeanList()){
-			cmsMenuUnitData = cmsMenuUnitDao.get(cmsMenuPriceBean.getUnitName());
+
+		for (CMSMenuPriceBean cmsMenuPriceBean : cmsMenuBean
+				.getCmsMenuPriceBeanList()) {
+			cmsMenuUnitData = cmsMenuUnitDao
+					.get(cmsMenuPriceBean.getUnitName());
 			cmsMenuPriceData = new CMSMenuPriceData();
 			cmsMenuPriceData.setCmsMenuUnitData(cmsMenuUnitData);
 			cmsMenuPriceData.setPrice(cmsMenuPriceBean.getPrice());
@@ -104,11 +108,11 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 	public BeanList get(int limit, int pageno, int cookId, int catagoryId,
 			HttpServletResponse response) {
 		BeanList objectListBean = new BeanList();
-		List<CMSMenuPriceBean> cmsMenuPriceBeanList =null;
+		List<CMSMenuPriceBean> cmsMenuPriceBeanList = null;
 		List<CMSMenuBean> cmsMenuBeanList = new ArrayList<CMSMenuBean>();
 		List<CMSMenuData> cmsMenuDataList = null;
 		CMSMenuPriceBean cmsMenuPriceBean = null;
-		
+
 		CMSCooksData cmsCooksData = cmsCooksDao.get(cookId, response);
 		CMSMenuCatagoryData cmsMenuCatagoryData = cmsMenuCatagoryDao.get(
 				catagoryId, response);
@@ -116,42 +120,49 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 		List<Object> list = cmsMenuDao.get(limit, pageno, cmsCooksData,
 				cmsMenuCatagoryData);
 
-		cmsMenuDataList = (List<CMSMenuData>) list.get(0);
-		int count = (int) list.get(1);
+		if (list != null && list.size() > 0) {
+			cmsMenuDataList = (List<CMSMenuData>) list.get(0);
+			int count = (int) list.get(1);
 
-		for (CMSMenuData cmsMenuData : cmsMenuDataList) {
-			CMSMenuBean cmsMenuBean = cmsMenuUtility
-					.populateCMSMenuBean(cmsMenuData);
-			cmsMenuPriceBeanList = new ArrayList<CMSMenuPriceBean>();
-			for(CMSMenuPriceData cmsMenuPriceData : cmsMenuData.getCmsMenuPriceDataList()){
-				cmsMenuPriceBean = new CMSMenuPriceBean();
-				cmsMenuPriceBean.setId(cmsMenuPriceData.getId());
-				cmsMenuPriceBean.setPrice(cmsMenuPriceData.getPrice());
-				cmsMenuPriceBean.setUnitName(cmsMenuPriceData.getCmsMenuUnitData().getUnit());
-				cmsMenuPriceBeanList.add(cmsMenuPriceBean);
-			}
-			cmsMenuBean.setCmsMenuPriceBeanList(cmsMenuPriceBeanList);
-			
-			String rootPath = servletContext.getRealPath("/");
-			String folderPath = rootPath + File.separator + "image"
-					+ File.separator + "menu_item" + File.separator;
-			String fileName = cmsMenuBean.getMenuImagePath();
-			
-			if(fileName!=null){
-				File image = new File(folderPath + fileName);
-				InputStream in = null;
-				try {
-					in = new FileInputStream(image);
-					cmsMenuBean.setImage(IOUtils.toByteArray(in));
-				} catch (IOException e) {
-					e.printStackTrace();
+			for (CMSMenuData cmsMenuData : cmsMenuDataList) {
+				CMSMenuBean cmsMenuBean = cmsMenuUtility
+						.populateCMSMenuBean(cmsMenuData);
+				
+				cmsMenuBean.setCooksId(cmsMenuData.getCmsCooksData().getId());
+				cmsMenuBean.setMenuCatagoryId(cmsMenuData.getCmsMenuCatagoryData().getId());
+				cmsMenuPriceBeanList = new ArrayList<CMSMenuPriceBean>();
+				for (CMSMenuPriceData cmsMenuPriceData : cmsMenuData
+						.getCmsMenuPriceDataList()) {
+					cmsMenuPriceBean = new CMSMenuPriceBean();
+					cmsMenuPriceBean.setId(cmsMenuPriceData.getId());
+					cmsMenuPriceBean.setPrice(cmsMenuPriceData.getPrice());
+					cmsMenuPriceBean.setUnitName(cmsMenuPriceData
+							.getCmsMenuUnitData().getUnit());
+					cmsMenuPriceBeanList.add(cmsMenuPriceBean);
 				}
-			}
-			cmsMenuBeanList.add(cmsMenuBean);
-		}
+				cmsMenuBean.setCmsMenuPriceBeanList(cmsMenuPriceBeanList);
 
-		objectListBean.setCmsMenuBeanList(cmsMenuBeanList);
-		objectListBean.setCount(count);
+				String rootPath = servletContext.getRealPath("/");
+				String folderPath = rootPath + File.separator + "image"
+						+ File.separator + "menu_item" + File.separator;
+				String fileName = cmsMenuBean.getMenuImagePath();
+
+				if (fileName != null) {
+					File image = new File(folderPath + fileName);
+					InputStream in = null;
+					try {
+						in = new FileInputStream(image);
+						cmsMenuBean.setImage(IOUtils.toByteArray(in));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				cmsMenuBeanList.add(cmsMenuBean);
+			}
+
+			objectListBean.setCmsMenuBeanList(cmsMenuBeanList);
+			objectListBean.setCount(count);
+		}
 
 		return objectListBean;
 	}
@@ -167,7 +178,7 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 	public int edit(CMSMenuBean cmsMenuBean, HttpServletResponse response) {
 		CMSMenuData cmsMenuData = null;
 		cmsMenuData = cmsMenuUtility.populateCMSMenuData(cmsMenuBean);
-		
+
 		CMSMenuCatagoryData cmsMenuCatagoryData = cmsMenuCatagoryDao.get(
 				cmsMenuBean.getMenuCatagoryId(), response);
 		cmsMenuData.setCmsMenuCatagoryData(cmsMenuCatagoryData);
@@ -175,7 +186,7 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 		CMSCooksData cmsCooksData = cmsCooksDao.get(cmsMenuBean.getCooksId(),
 				response);
 		cmsMenuData.setCmsCooksData(cmsCooksData);
-		
+
 		return cmsMenuDao.edit(cmsMenuData, response);
 	}
 
@@ -183,12 +194,97 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 	public List<CMSMenuUnitBean> getMenuUnit() {
 		List<CMSMenuUnitBean> cmsMenuUnitBeanList = new ArrayList<CMSMenuUnitBean>();
 		CMSMenuUnitBean cmsMenuUnitBean = null;
-		List<CMSMenuUnitData> cmsMenuUnitDataList = cmsMenuUnitDao.getMenuUnit();
-		for(CMSMenuUnitData cmsMenuUnitData : cmsMenuUnitDataList){
-		    cmsMenuUnitBean = cmsMenuUtility.populateCMSMenuUnitBean(cmsMenuUnitData);
-		    cmsMenuUnitBeanList.add(cmsMenuUnitBean);
+		List<CMSMenuUnitData> cmsMenuUnitDataList = cmsMenuUnitDao
+				.getMenuUnit();
+		for (CMSMenuUnitData cmsMenuUnitData : cmsMenuUnitDataList) {
+			cmsMenuUnitBean = cmsMenuUtility
+					.populateCMSMenuUnitBean(cmsMenuUnitData);
+			cmsMenuUnitBeanList.add(cmsMenuUnitBean);
 		}
 		return cmsMenuUnitBeanList;
 	}
 
+	@Override
+	public List<CMSMenuBean> get(int cookId, int specialityId,
+			HttpServletResponse response) {
+		List<CMSMenuBean> cmsMenuBeanList = new ArrayList<CMSMenuBean>();
+		CMSCooksData cmsCooksData = cmsCooksDao.get(cookId, response);
+		CMSCooksSpecialityData cmsMenuCatagoryData = new CMSCooksSpecialityData();
+		List<CMSMenuData> cmsMenuDataList = cmsMenuDao.get(cmsCooksData,
+				cmsMenuCatagoryData);
+		for (CMSMenuData cmsMenuData : cmsMenuDataList) {
+			CMSMenuBean cmsMenuBean = cmsMenuUtility
+					.populateCMSMenuBean(cmsMenuData);
+			cmsMenuBeanList.add(cmsMenuBean);
+		}
+		return cmsMenuBeanList;
+	}
+
+	@SuppressWarnings("null")
+	@Override
+	public void addSpeciality(CookSpecialityBean cookSpecialityBean,
+			HttpServletResponse response) {
+
+		CMSCooksSpecialityData cmsCooksSpecialityData = cmsCooksDao
+				.getCooksSpeciality(cookSpecialityBean.getSpeciality());
+		CMSCooksData cmsCooksData = cmsCooksDao.get(
+				cookSpecialityBean.getCookId(), response);
+		CookSpecialityMenuData cookSpecialityMenuData = cmsMenuDao
+				.getCookSpeciality(cmsCooksData, cmsCooksSpecialityData);
+
+		if (cookSpecialityMenuData == null) {
+			cookSpecialityMenuData = new CookSpecialityMenuData();
+			cookSpecialityMenuData.setCmsCooksData(cmsCooksData);
+			cookSpecialityMenuData
+					.setCmsCooksSpecialityData(cmsCooksSpecialityData);
+		}
+		
+		CMSMenuData cmsMenuData = null;
+		List<CMSMenuData> cmsMenuDataList = new ArrayList<CMSMenuData>();
+		for (Integer menuId : cookSpecialityBean.getMenuIds()) {
+			cmsMenuData = cmsMenuDao.get(menuId);
+			cmsMenuDataList.add(cmsMenuData);
+		}
+
+		cookSpecialityMenuData.setCmsMenuDataList(cmsMenuDataList);
+
+		cmsMenuDao.addSpeciality(cookSpecialityMenuData);
+	}
+
+	@Override
+	public CookSpecialityBean getCookSpeciality(int cookId, String speciality,
+			HttpServletResponse response) {
+		CookSpecialityBean cookSpecialityBean = new CookSpecialityBean();
+		List<Integer> menuIdList = new ArrayList<Integer>();
+		CMSCooksData cmsCooksData = cmsCooksDao.get(cookId, response);
+		CMSCooksSpecialityData cmsCooksSpecialityData = cmsCooksDao
+				.getCooksSpeciality(speciality);
+		CookSpecialityMenuData cookSpecialityMenuData = cmsMenuDao
+				.getCookSpeciality(cmsCooksData, cmsCooksSpecialityData);
+		if (cookSpecialityMenuData != null) {
+			cookSpecialityBean.setCookId(cookSpecialityMenuData
+					.getCmsCooksData().getId());
+			cookSpecialityBean.setSpeciality(cookSpecialityMenuData
+					.getCmsCooksSpecialityData().getSpeciality());
+			for (CMSMenuData cmsMenuData : cookSpecialityMenuData
+					.getCmsMenuDataList()) {
+				menuIdList.add(cmsMenuData.getId());
+			}
+		}
+		cookSpecialityBean.setMenuIds(menuIdList);
+		return cookSpecialityBean;
+	}
+
+	@Override
+	public void deleteCookSpeciality(int cookId, String speciality,
+			HttpServletResponse response) {
+		CMSCooksData cmsCooksData = cmsCooksDao.get(cookId, response);
+		CMSCooksSpecialityData cmsCooksSpecialityData = cmsCooksDao
+				.getCooksSpeciality(speciality);
+		CookSpecialityMenuData cookSpecialityMenuData = cmsMenuDao
+				.getCookSpeciality(cmsCooksData, cmsCooksSpecialityData);
+		if (cookSpecialityMenuData != null) {
+			cmsMenuDao.deleteCookSpecialityMenu(cookSpecialityMenuData);
+		}
+	}
 }

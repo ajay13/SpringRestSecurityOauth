@@ -34,3 +34,12 @@ insert into `cms_menu_unit` (`id`,`unit`) values (3,'Large');
 insert into `cms_menu_unit` (`id`,`unit`) values (4,'Half');
 insert into `cms_menu_unit` (`id`,`unit`) values (5,'Full');
 insert into `cms_menu_unit` (`id`,`unit`) values (6,'One');
+
+
+
+
+insert into `cast_info` (`id`,`cast`) values (1,'Marathi');
+insert into `cast_info` (`id`,`cast`) values (2,'Gujrati');
+insert into `cast_info` (`id`,`cast`) values (3,'Jain');
+insert into `cast_info` (`id`,`cast`) values (4,'Brahmin');
+insert into `cast_info` (`id`,`cast`) values (5,'Muslim');

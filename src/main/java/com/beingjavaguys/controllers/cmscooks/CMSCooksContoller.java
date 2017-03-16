@@ -1,11 +1,12 @@
 package com.beingjavaguys.controllers.cmscooks;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.beingjavaguys.bean.cmscooks.CMSCooksBean;
+import com.beingjavaguys.bean.cmscooks.CMSCooksSpecialityBean;
 import com.beingjavaguys.bean.generic.BeanList;
 import com.beingjavaguys.services.cmscooks.CMSCooksService;
 import com.beingjavaguys.utility.validations.RestValidation;
@@ -29,26 +32,33 @@ public class CMSCooksContoller {
 	@Autowired
 	RestValidation restValidation;
 	
+	@Autowired
+	private ServletContext servletContext;
+	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public @ResponseBody
-	void add(HttpServletResponse response,
+	int add(HttpServletResponse response,
 			@RequestBody CMSCooksBean cmsCooksBean) {
+		int id = 0;
 		try {
-			cmsCooksService.add(cmsCooksBean, response);
+			id = cmsCooksService.add(cmsCooksBean, response);
 		} catch (Exception e) {
 			response.setStatus(400);
 		}
+		return id;
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)
 	public @ResponseBody
-	void edit(HttpServletResponse response,
+	int edit(HttpServletResponse response,
 			@RequestBody CMSCooksBean cmsCooksBean) {
+		int cookId = 0;
 		try {
-			cmsCooksService.edit(cmsCooksBean, response);
+			cookId = cmsCooksService.edit(cmsCooksBean, response);
 		} catch (Exception e) {
 			response.setStatus(400);
 		}
+		return cookId;
 	}
 
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
@@ -104,6 +114,56 @@ public class CMSCooksContoller {
 			response.setStatus(400);
 		}
 		return cmsCooksBeanList;
+	}
+	
+	@RequestMapping(value = "/fileupload", headers = ("content-type=multipart/*"), method = RequestMethod.POST)
+	public @ResponseBody
+	void upload(HttpServletResponse response,
+			@RequestParam("file") MultipartFile inputFile,
+			@RequestParam(required = true) int cookId) {
+		try {
+			String rootPath = servletContext.getRealPath("/");
+			String originalFilename = inputFile.getOriginalFilename();
+			String folderPath = rootPath + File.separator + "image"
+					+ File.separator + "cooks" + File.separator;
+			String fileName = originalFilename;
+			File destinationFile = new File(folderPath + fileName);
+			if (!destinationFile.exists()) {
+				destinationFile.mkdirs();
+			} else {
+				boolean trigger = true;
+				int i = 0;
+				while (trigger) {
+					if (destinationFile.exists()) {
+						destinationFile = new File(folderPath + i + fileName);
+						i++;
+					} else {
+						trigger = false;
+					}
+				}
+			}
+			inputFile.transferTo(destinationFile);
+			String prevoiusFileName = cmsCooksService.uploadImage(
+					destinationFile.getName(), cookId, response);
+			if (prevoiusFileName != null && !prevoiusFileName.trim().isEmpty()) {
+				destinationFile = new File(folderPath + prevoiusFileName);
+				destinationFile.delete();
+			}
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+	}
+	
+	@RequestMapping(value = "/getCooksSpeciality", method = RequestMethod.GET)
+	public @ResponseBody
+	List<CMSCooksSpecialityBean> getCast(HttpServletResponse response) {
+		List<CMSCooksSpecialityBean> cmsCooksSpecialityBeanList = null;
+		try {
+			cmsCooksSpecialityBeanList = cmsCooksService.getCooksSpeciality();
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+		return cmsCooksSpecialityBeanList;
 	}
 
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.beingjavaguys.dao.cmscooks.CMSCooksDao;
 import com.beingjavaguys.dao.core.CoreDao;
 import com.beingjavaguys.models.cmscooks.CMSCooksData;
+import com.beingjavaguys.models.cmscooks.CMSCooksSpecialityData;
 
 @Repository("cmsCooksDao")
 public class CMSCooksDaoImpl implements CMSCooksDao {
@@ -22,12 +23,14 @@ public class CMSCooksDaoImpl implements CMSCooksDao {
 	CoreDao coreDao;
 
 	@Override
-	public void add(CMSCooksData cmsCooksData, HttpServletResponse response) {
+	public int add(CMSCooksData cmsCooksData, HttpServletResponse response) {
 
 		String getCooks = "select count(C) from CMSCooksData C where C.name=:name";
 
 		Session session = null;
 		Query query = null;
+		
+		int id = 0;
 		try {
 			session = coreDao.getSession();
 			session.beginTransaction();
@@ -40,6 +43,7 @@ public class CMSCooksDaoImpl implements CMSCooksDao {
 				session.saveOrUpdate(cmsCooksData);
 				session.getTransaction().commit();
 				response.setStatus(200);// for OK
+				id = cmsCooksData.getId();
 			} else {
 				response.setStatus(402);// for already exists
 			}
@@ -49,6 +53,8 @@ public class CMSCooksDaoImpl implements CMSCooksDao {
 		} finally {
 			session.close();
 		}
+		
+		return id;
 	}
 
 	@Override
@@ -130,18 +136,21 @@ public class CMSCooksDaoImpl implements CMSCooksDao {
 	}
 
 	@Override
-	public void edit(CMSCooksData cmsCooksData, HttpServletResponse response) {
+	public int edit(CMSCooksData cmsCooksData, HttpServletResponse response) {
 		Session session = null;
+		int cookId = 0;
 		try {
 			session = coreDao.getSession();
 			session.beginTransaction();
 			session.saveOrUpdate(cmsCooksData);
 			session.getTransaction().commit();
+			cookId = cmsCooksData.getId();
 		} catch (HibernateException e) {
 			e.printStackTrace();
 		} finally {
 			session.close();
 		}
+		return cookId;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -166,5 +175,59 @@ public class CMSCooksDaoImpl implements CMSCooksDao {
 		}
 		return cmsCooksDataList;
 	}
+	
+	@Override
+	public void updateMenu(CMSCooksData cmsCooksData, HttpServletResponse response) {
+		Session session = null;
+		try {
+			session = coreDao.getSession();
+			session.beginTransaction();
+			session.update(cmsCooksData);
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+	
+    @SuppressWarnings("unchecked")
+	@Override	
+	public List<CMSCooksSpecialityData> getCooksSpeciality() {
+		List<CMSCooksSpecialityData> cmsCooksSpecialityDataList = null;
+		Session session = null;
+		String getCooksSpeciality = "select C from CMSCooksSpecialityData C";
+		Query query = null;
+		try {
+			session = coreDao.getSession();
+			session.beginTransaction();
+			query = session.createQuery(getCooksSpeciality);
+			cmsCooksSpecialityDataList = query.list();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return cmsCooksSpecialityDataList;
+	}
 
+    @Override
+	public CMSCooksSpecialityData getCooksSpeciality(String speciality) {
+    	CMSCooksSpecialityData cmsCooksSpecialityData = null;
+		Session session = null;
+		String getCast = "select C from CMSCooksSpecialityData C where C.speciality=:speciality";
+		Query query = null;
+		try {
+			session = coreDao.getSession();
+			session.beginTransaction();
+			query = session.createQuery(getCast);
+			query.setParameter("speciality", speciality);
+			cmsCooksSpecialityData = (CMSCooksSpecialityData) query.uniqueResult();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return cmsCooksSpecialityData;
+	}
 }
