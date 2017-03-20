@@ -43,3 +43,8 @@ insert into `cast_info` (`id`,`cast`) values (2,'Gujrati');
 insert into `cast_info` (`id`,`cast`) values (3,'Jain');
 insert into `cast_info` (`id`,`cast`) values (4,'Brahmin');
 insert into `cast_info` (`id`,`cast`) values (5,'Muslim');
+
+
+insert into `cms_cooks_speciality` (`id`,`speciality`) values (1,'Pre-Orders');
+insert into `cms_cooks_speciality` (`id`,`speciality`) values (2,'Top Dishes');
+insert into `cms_cooks_speciality` (`id`,`speciality`) values (3,'Weekend Special Dishes');
