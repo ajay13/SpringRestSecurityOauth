@@ -5,12 +5,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.beingjavaguys.dao.cmscooks.CMSCooksDao;
 import com.beingjavaguys.dao.cmsmenu.CMSMenuDao;
 import com.beingjavaguys.dao.core.CoreDao;
 import com.beingjavaguys.models.cmscooks.CMSCooksData;
@@ -24,6 +26,9 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 
 	@Autowired
 	CoreDao coreDao;
+
+	@Autowired
+	CMSCooksDao cmsCooksDao;
 
 	@Override
 	public int add(CMSMenuData cmsMenuData, HttpServletResponse response) {
@@ -207,21 +212,47 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 
 	@Override
 	public void delete(CMSMenuData cmsMenuData, HttpServletResponse response) {
+		boolean trigger = true;
+		
+		Query query = null;
+		String getCook = "select C from CMSCooksData as C where C.id=:cookId";
+
+		CMSCooksData cmsCooksData = null;
+
+		List<CookSpecialityMenuData> cookSpecialityMenuDataList = null;
 
 		Session session = null;
 		try {
 			session = coreDao.getSession();
-			session.beginTransaction();
-			cmsMenuData.getCmsMenuPriceDataList().clear();
-			session.delete(cmsMenuData);
-			session.getTransaction().commit();
+			query = session.createQuery(getCook);
+			query.setParameter("cookId", cmsMenuData.getCmsCooksData().getId());
+			cmsCooksData = (CMSCooksData) query.uniqueResult();
+			Hibernate.initialize(cmsCooksData.getCookSpecialityMenuDataList());
+			cookSpecialityMenuDataList = cmsCooksData
+					.getCookSpecialityMenuDataList();
+			
+			for(CookSpecialityMenuData cookSpecialityMenuData : cookSpecialityMenuDataList){
+				List<CMSMenuData> menuDataList  = cookSpecialityMenuData.getCmsMenuDataList();
+				for(CMSMenuData menuData : menuDataList){
+					 if(menuData.getId() == cmsMenuData.getId()){
+						 trigger = false;
+					 }
+				}
+			}
+			
+			if(trigger){
+				session.beginTransaction();
+				  cmsMenuData.getCmsMenuPriceDataList().clear();
+				  session.delete(cmsMenuData); session.getTransaction().commit();
+			}else{
+			   response.setStatus(206);	
+			}
 		} catch (HibernateException e) {
 			e.printStackTrace();
 		} finally {
 			session.close();
 
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -251,7 +282,6 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 		return cmsMenuDataList;
 	}
 
-	
 	@Override
 	public void addSpeciality(CookSpecialityMenuData cookSpecialityMenuData) {
 		Session session = null;
@@ -268,9 +298,10 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 			session.close();
 		}
 	}
-	
+
 	@Override
-	public CookSpecialityMenuData getCookSpeciality(CMSCooksData cmsCooksData,CMSCooksSpecialityData cmsCooksSpecialityData) {
+	public CookSpecialityMenuData getCookSpeciality(CMSCooksData cmsCooksData,
+			CMSCooksSpecialityData cmsCooksSpecialityData) {
 
 		CookSpecialityMenuData cookSpecialityMenuData = null;
 
@@ -283,8 +314,10 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 			if (getCookSpeciality != null) {
 				query = session.createQuery(getCookSpeciality);
 				query.setParameter("cookId", cmsCooksData.getId());
-				query.setParameter("specialityId", cmsCooksSpecialityData.getId());
-				cookSpecialityMenuData = (CookSpecialityMenuData)query.uniqueResult();
+				query.setParameter("specialityId",
+						cmsCooksSpecialityData.getId());
+				cookSpecialityMenuData = (CookSpecialityMenuData) query
+						.uniqueResult();
 			}
 		} catch (HibernateException e) {
 			e.printStackTrace();
@@ -293,16 +326,17 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 		}
 		return cookSpecialityMenuData;
 	}
-	
+
 	@Override
-	public void deleteCookSpecialityMenu(CookSpecialityMenuData cmsCooksSpecialityData) {
+	public void deleteCookSpecialityMenu(
+			CookSpecialityMenuData cmsCooksSpecialityData) {
 		Session session = null;
 		try {
 			session = coreDao.getSession();
-			/*session.beginTransaction();*/
+			/* session.beginTransaction(); */
 			cmsCooksSpecialityData.getCmsMenuDataList().clear();
 			session.delete(cmsCooksSpecialityData);
-			/*session.getTransaction().commit();*/
+			/* session.getTransaction().commit(); */
 			session.flush();
 			session.clear();
 		} catch (HibernateException e) {
@@ -311,5 +345,60 @@ public class CMSMenuDaoImpl implements CMSMenuDao {
 			session.close();
 
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object> getCooksOfItem(int limit, int pageno, String itemName) {
+
+		List<Object> list = new ArrayList<Object>();
+		List<CMSMenuData> cmsMenuDataList = new ArrayList<CMSMenuData>();
+
+		String getMenuCount = "";
+		String getMenu = null;
+
+		if (itemName != null && itemName != null) {
+			getMenu = " select M from CMSMenuData M where M.itemName like :itemName";
+			getMenuCount = "select count(M) from CMSMenuData M where M.itemName like :itemName";
+		}
+
+		Session session = null;
+		Query query = null;
+		try {
+			session = coreDao.getSession();
+			session.beginTransaction();
+
+			if (getMenu != null) {
+				query = session.createQuery(getMenu);
+
+				query.setParameter("itemName", "%" + itemName + "%");
+
+				query.setFirstResult((pageno * limit) - limit);
+				query.setMaxResults(limit);
+				cmsMenuDataList = query.list();
+
+				query = session.createQuery(getMenuCount);
+
+				query.setParameter("itemName", "%" + itemName + "%");
+
+				Long count = (Long) query.uniqueResult();
+
+				int pagination = (int) (count / limit);
+
+				if (pagination * limit < count) {
+					pagination++;
+				}
+
+				list.add(cmsMenuDataList);
+				list.add(pagination);
+
+			}
+
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return list;
 	}
 }

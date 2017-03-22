@@ -15,6 +15,7 @@ import com.beingjavaguys.dao.cmscooks.CMSCooksDao;
 import com.beingjavaguys.dao.core.CoreDao;
 import com.beingjavaguys.models.cmscooks.CMSCooksData;
 import com.beingjavaguys.models.cmscooks.CMSCooksSpecialityData;
+import com.beingjavaguys.models.cmsmenu.CMSMenuData;
 
 @Repository("cmsCooksDao")
 public class CMSCooksDaoImpl implements CMSCooksDao {
@@ -59,20 +60,26 @@ public class CMSCooksDaoImpl implements CMSCooksDao {
 
 	@Override
 	public void delete(CMSCooksData cmsCooksData, HttpServletResponse response) {
-
-		Session session = null;
-		try {
-			session = coreDao.getSession();
-			session.beginTransaction();
-			session.delete(cmsCooksData);
-			session.getTransaction().commit();
-		} catch (HibernateException e) {
-			e.printStackTrace();
-		} finally {
-			session.close();
-
-		}
-
+			Session session = null;
+			Query query = null;
+			String getMenu = "select count(M) from CMSMenuData as M where M.cmsCooksData.id=:cookId";
+			try {
+				session = coreDao.getSession();
+				query = session.createQuery(getMenu);
+				query.setParameter("cookId", cmsCooksData.getId());
+				long count = (long)query.uniqueResult();
+				if(count<=0){
+					session.beginTransaction();
+					session.delete(cmsCooksData);
+					session.getTransaction().commit();
+				}else{
+					response.setStatus(206);
+				}
+			} catch (HibernateException e) {
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
 	}
 
 	@Override

@@ -34,4 +34,6 @@ public interface CMSMenuDao {
 
 	public void deleteCookSpecialityMenu(
 			CookSpecialityMenuData cookSpecialityMenuData);
+
+	public List<Object> getCooksOfItem(int limit, int pageno, String itemName);
 }

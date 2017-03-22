@@ -149,4 +149,13 @@ public class CMSCooksData {
 		this.castData = castData;
 	}
 
+	public List<CookSpecialityMenuData> getCookSpecialityMenuDataList() {
+		return cookSpecialityMenuDataList;
+	}
+
+	public void setCookSpecialityMenuDataList(
+			List<CookSpecialityMenuData> cookSpecialityMenuDataList) {
+		this.cookSpecialityMenuDataList = cookSpecialityMenuDataList;
+	}
+
 }

@@ -287,4 +287,62 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 			cmsMenuDao.deleteCookSpecialityMenu(cookSpecialityMenuData);
 		}
 	}
+
+	@Override
+	public BeanList getCooksOfItem(int limit, int pageno,
+			String itemName, HttpServletResponse response) {
+		BeanList objectListBean = new BeanList();
+		List<CMSMenuPriceBean> cmsMenuPriceBeanList = null;
+		List<CMSMenuBean> cmsMenuBeanList = new ArrayList<CMSMenuBean>();
+		List<CMSMenuData> cmsMenuDataList = null;
+		CMSMenuPriceBean cmsMenuPriceBean = null;
+
+		List<Object> list = cmsMenuDao.getCooksOfItem(limit, pageno, itemName);
+
+		if (list != null && list.size() > 0) {
+			cmsMenuDataList = (List<CMSMenuData>) list.get(0);
+			int count = (int) list.get(1);
+
+			for (CMSMenuData cmsMenuData : cmsMenuDataList) {
+				CMSMenuBean cmsMenuBean = cmsMenuUtility
+						.populateCMSMenuBean(cmsMenuData);
+				
+				cmsMenuBean.setCooksId(cmsMenuData.getCmsCooksData().getId());
+				cmsMenuBean.setMenuCatagoryId(cmsMenuData.getCmsMenuCatagoryData().getId());
+				cmsMenuPriceBeanList = new ArrayList<CMSMenuPriceBean>();
+				for (CMSMenuPriceData cmsMenuPriceData : cmsMenuData
+						.getCmsMenuPriceDataList()) {
+					cmsMenuPriceBean = new CMSMenuPriceBean();
+					cmsMenuPriceBean.setId(cmsMenuPriceData.getId());
+					cmsMenuPriceBean.setPrice(cmsMenuPriceData.getPrice());
+					cmsMenuPriceBean.setUnitName(cmsMenuPriceData
+							.getCmsMenuUnitData().getUnit());
+					cmsMenuPriceBeanList.add(cmsMenuPriceBean);
+				}
+				cmsMenuBean.setCmsMenuPriceBeanList(cmsMenuPriceBeanList);
+
+				String rootPath = servletContext.getRealPath("/");
+				String folderPath = rootPath + File.separator + "image"
+						+ File.separator + "menu_item" + File.separator;
+				String fileName = cmsMenuBean.getMenuImagePath();
+
+				if (fileName != null) {
+					File image = new File(folderPath + fileName);
+					InputStream in = null;
+					try {
+						in = new FileInputStream(image);
+						cmsMenuBean.setImage(IOUtils.toByteArray(in));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				cmsMenuBeanList.add(cmsMenuBean);
+			}
+
+			objectListBean.setCmsMenuBeanList(cmsMenuBeanList);
+			objectListBean.setCount(count);
+		}
+
+		return objectListBean;
+	}
 }

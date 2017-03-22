@@ -37,4 +37,7 @@ public interface CMSMenuService {
 
 	public void deleteCookSpeciality(int cookId, String speciality,
 			HttpServletResponse response);
+	
+	public BeanList getCooksOfItem(int limit, int pageno, String itemName,
+			HttpServletResponse response);	
 }

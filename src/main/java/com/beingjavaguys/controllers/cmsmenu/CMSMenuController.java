@@ -257,4 +257,35 @@ public class CMSMenuController {
 			response.setStatus(400);
 		}
 	}
+	
+	@RequestMapping(value = "/getCooksofitem", method = RequestMethod.GET)
+	public @ResponseBody
+	BeanList getCooksOfItem(HttpServletResponse response,
+			@RequestParam(required = false) String limit,
+			@RequestParam(required = false) String pageno,
+			@RequestParam(required = false) String itemName) {
+		int limitInt = 0, pagenoInt = 0;
+		BeanList beanList = null;
+		try {
+			if (limit == null || limit.equalsIgnoreCase("null")
+					|| limit.equals("")) {
+				limitInt = 10;
+			} else {
+				restValidation.numberFormatValidation(limit);
+				limitInt = Integer.parseInt(limit);
+			}
+			if (pageno == null || pageno.equalsIgnoreCase("null")
+					|| pageno.equals("")) {
+
+				pagenoInt = 1;
+			} else {
+				restValidation.numberFormatValidation(pageno);
+				pagenoInt = Integer.parseInt(pageno);
+			}
+			beanList = cmsMenuService.getCooksOfItem(limitInt, pagenoInt,itemName,response);
+		} catch (Exception e) {
+			response.setStatus(400);
+		}
+		return beanList;
+	}
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.beingjavaguys.dao.cmsmenu.CMSMenuCatagoryDao;
 import com.beingjavaguys.dao.core.CoreDao;
 import com.beingjavaguys.models.cmsmenu.CMSMenuCatagoryData;
+import com.beingjavaguys.models.cmsmenu.CMSMenuData;
 
 @Repository("cmsMenuCatagoryDao")
 public class CMSMenuCatagoryDaoImpl implements CMSMenuCatagoryDao {
@@ -54,20 +55,28 @@ public class CMSMenuCatagoryDaoImpl implements CMSMenuCatagoryDao {
 
 	@Override
 	public void delete(CMSMenuCatagoryData cmsMenuCatagoryData, HttpServletResponse response) {
-
-		Session session = null;
-		try {
-			session = coreDao.getSession();
-			session.beginTransaction();
-			session.delete(cmsMenuCatagoryData);
-			session.getTransaction().commit();
-		} catch (HibernateException e) {
-			e.printStackTrace();
-		} finally {
-			session.close();
-
-		}
-		
+			Session session = null;
+			Query query = null;
+			String getMenu = "select count(M) from CMSMenuData as M where M.cmsMenuCatagoryData.id=:catagoryId";
+			try {
+				session = coreDao.getSession();
+				query = session.createQuery(getMenu);
+				query.setParameter("catagoryId", cmsMenuCatagoryData.getId());
+				long count = (long)query.uniqueResult();
+				
+				if(count<=0){
+					session.beginTransaction();
+					session.delete(cmsMenuCatagoryData);
+					session.getTransaction().commit();
+				}else{
+					response.setStatus(206);
+				}
+				
+			} catch (HibernateException e) {
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
 	}
 	
 	@Override
