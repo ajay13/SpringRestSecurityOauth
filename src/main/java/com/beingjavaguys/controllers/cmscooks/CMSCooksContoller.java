@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,9 +75,10 @@ public class CMSCooksContoller {
 
 	@RequestMapping(value = "/cooklist", method = RequestMethod.GET)
 	public @ResponseBody
-	BeanList get(HttpServletResponse response,
+	BeanList get(HttpServletResponse response, HttpServletRequest httpServletRequest,
 			@RequestParam(required = false) String limit,
 			@RequestParam(required = false) String pageno) {
+		String url = httpServletRequest.getRequestURL().toString();
 		int limitInt = 0, pagenoInt = 0;
 		BeanList beanList = null;
 		try {
@@ -96,7 +98,7 @@ public class CMSCooksContoller {
 				pagenoInt = Integer.parseInt(pageno);
 			}
 
-			beanList = cmsCooksService.get(limitInt, pagenoInt);
+			beanList = cmsCooksService.get(limitInt, pagenoInt,url);
 		} catch (Exception e) {
 			response.setStatus(400);
 		}

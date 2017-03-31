@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -20,12 +21,24 @@ public class CMSMenuPriceData {
 	@Column(name = "id")
 	int id;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne( fetch = FetchType.EAGER)
 	@JoinColumn(name = "unit_type")
 	private CMSMenuUnitData cmsMenuUnitData;
 
 	@Column(name = "price")
 	private String price;
+
+	@ManyToOne(cascade= CascadeType.PERSIST, fetch = FetchType.EAGER)
+	@JoinColumn(name = "menu_id", nullable = false)
+	private CMSMenuData cmsMenuData;
+
+	public CMSMenuData getCmsMenuData() {
+		return cmsMenuData;
+	}
+
+	public void setCmsMenuData(CMSMenuData cmsMenuData) {
+		this.cmsMenuData = cmsMenuData;
+	}
 
 	public int getId() {
 		return id;

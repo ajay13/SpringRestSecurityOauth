@@ -13,7 +13,7 @@ public interface CMSCooksService {
 
 	void delete(int id, HttpServletResponse response);
 
-	public BeanList get(int limit, int pageno);
+	public BeanList get(int limit, int pageno,String url);
 
 	int edit(CMSCooksBean cmsCooksBean, HttpServletResponse response);
 

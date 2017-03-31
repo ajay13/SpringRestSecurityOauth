@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.beingjavaguys.models.cmscooks.CMSCooksData;
@@ -44,10 +45,14 @@ public class CMSMenuData {
 
 	@Column(name = "unit")
 	private int unit;
-
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "cms_menu_price_mapping", joinColumns = { @JoinColumn(name = "menu_id") }, inverseJoinColumns = { @JoinColumn(name = "unit_id") })
+	
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "cmsMenuData",fetch = FetchType.EAGER)
 	private List<CMSMenuPriceData> cmsMenuPriceDataList;
+
+
+	/*@ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+	@JoinTable(name = "cms_menu_price_mapping", joinColumns = { @JoinColumn(name = "menu_id") }, inverseJoinColumns = { @JoinColumn(name = "unit_id") })
+	private List<CMSMenuPriceData> cmsMenuPriceDataList;*/
 
 	public int getId() {
 		return id;

@@ -25,7 +25,6 @@ import com.beingjavaguys.models.other.CastData;
 import com.beingjavaguys.services.cmscooks.CMSCooksService;
 import com.beingjavaguys.utility.cmscooks.CMSCooksUtility;
 
-
 @Service("cmsCooksService")
 public class CMSCooksServiceImpl implements CMSCooksService {
 
@@ -34,10 +33,10 @@ public class CMSCooksServiceImpl implements CMSCooksService {
 
 	@Autowired
 	CMSCooksUtility cmsCooksUtility;
-	
+
 	@Autowired
 	OtherDao otherDao;
-	
+
 	@Autowired
 	ServletContext servletContext;
 
@@ -60,37 +59,43 @@ public class CMSCooksServiceImpl implements CMSCooksService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public BeanList get(int limit, int pageno) {
+	public BeanList get(int limit, int pageno,String url) {
+		String contextPath = servletContext.getContextPath();
+		String mainURL = (url.substring(0, url.indexOf(contextPath)))
+				+ (contextPath);
+
 		BeanList objectListBean = new BeanList();
 		List<CMSCooksBean> cmsCooksBeanList = new ArrayList<CMSCooksBean>();
 		List<CMSCooksData> cmsCooksDataList = null;
-		List<Object> list  = cmsCooksDao.get(limit, pageno);
-		
+		List<Object> list = cmsCooksDao.get(limit, pageno);
+
 		cmsCooksDataList = (List<CMSCooksData>) list.get(0);
 		int count = (int) list.get(1);
-		
+
 		for (CMSCooksData cmsCooksData : cmsCooksDataList) {
-			CMSCooksBean cmsCooksBean =  cmsCooksUtility.populateCMSCooks(cmsCooksData);
-			
+			CMSCooksBean cmsCooksBean = cmsCooksUtility
+					.populateCMSCooks(cmsCooksData);
+
 			String rootPath = servletContext.getRealPath("/");
-   			String folderPath = rootPath + File.separator + "image"
-   					+ File.separator + "cooks" + File.separator;
-   			String fileName = cmsCooksBean.getImagePath();
-   			
-   			if(fileName!=null){
-   				File image = new File(folderPath + fileName);
-   				InputStream in = null;
-   				try {
-   					in = new FileInputStream(image);
-   					cmsCooksBean.setImage(IOUtils.toByteArray(in));
-   				} catch (IOException e) {
-   					e.printStackTrace();
-   				}
-   			}
-			
+			String folderPath = File.separator + "image" + File.separator
+					+ "cooks" + File.separator;
+			String fileName = cmsCooksBean.getImagePath();
+
+			if (fileName != null) {
+				File image = new File(rootPath + folderPath + fileName);
+				InputStream in = null;
+				try {
+					in = new FileInputStream(image);
+					// cmsCooksBean.setImage(IOUtils.toByteArray(in));
+					cmsCooksBean.setImageURL(mainURL + folderPath + fileName);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
 			cmsCooksBeanList.add(cmsCooksBean);
 		}
-		
+
 		objectListBean.setCmsCooksBeanList(cmsCooksBeanList);
 		objectListBean.setCount(count);
 
@@ -98,8 +103,7 @@ public class CMSCooksServiceImpl implements CMSCooksService {
 	}
 
 	@Override
-	public int edit(CMSCooksBean cmsCooksBean,
-			HttpServletResponse response) {
+	public int edit(CMSCooksBean cmsCooksBean, HttpServletResponse response) {
 		CMSCooksData cmsCooksData = null;
 		CastData castData = null;
 		cmsCooksData = cmsCooksUtility.populateCMSCooks(cmsCooksBean);
@@ -114,29 +118,32 @@ public class CMSCooksServiceImpl implements CMSCooksService {
 		List<CMSCooksData> cmsCooksDataList = null;
 		cmsCooksDataList = cmsCooksDao.get(cookName, response);
 		for (CMSCooksData cmsCooksData : cmsCooksDataList) {
-			CMSCooksBean cmsCooksBean =  cmsCooksUtility.populateCMSCooks(cmsCooksData);
+			CMSCooksBean cmsCooksBean = cmsCooksUtility
+					.populateCMSCooks(cmsCooksData);
 			cmsCooksBeanList.add(cmsCooksBean);
 		}
 		return cmsCooksBeanList;
 	}
-	
+
 	@Override
 	public String uploadImage(String imageName, int cookId,
 			HttpServletResponse response) {
-		CMSCooksData cmsCooksData = cmsCooksDao.get(cookId,response);
+		CMSCooksData cmsCooksData = cmsCooksDao.get(cookId, response);
 		String previousFilePath = cmsCooksData.getImagePath();
 		cmsCooksData.setImagePath(imageName);
 		cmsCooksDao.updateMenu(cmsCooksData, response);
 		return previousFilePath;
 	}
-	
+
 	@Override
 	public List<CMSCooksSpecialityBean> getCooksSpeciality() {
 		List<CMSCooksSpecialityBean> cmsCooksSpecialityBeanlist = new ArrayList<CMSCooksSpecialityBean>();
 		CMSCooksSpecialityBean cmsCooksSpecialityBean = null;
-		List<CMSCooksSpecialityData> cmsCooksSpecialityDataList = cmsCooksDao.getCooksSpeciality();
-		for(CMSCooksSpecialityData cmsCooksSpecialityData : cmsCooksSpecialityDataList){
-			cmsCooksSpecialityBean = cmsCooksUtility.populateCMSCooksSpeciality(cmsCooksSpecialityData);
+		List<CMSCooksSpecialityData> cmsCooksSpecialityDataList = cmsCooksDao
+				.getCooksSpeciality();
+		for (CMSCooksSpecialityData cmsCooksSpecialityData : cmsCooksSpecialityDataList) {
+			cmsCooksSpecialityBean = cmsCooksUtility
+					.populateCMSCooksSpeciality(cmsCooksSpecialityData);
 			cmsCooksSpecialityBeanlist.add(cmsCooksSpecialityBean);
 		}
 		return cmsCooksSpecialityBeanlist;

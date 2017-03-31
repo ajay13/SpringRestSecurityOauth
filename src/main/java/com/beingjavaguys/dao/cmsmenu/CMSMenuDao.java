@@ -9,9 +9,12 @@ import com.beingjavaguys.models.cmscooks.CMSCooksSpecialityData;
 import com.beingjavaguys.models.cmscooks.CookSpecialityMenuData;
 import com.beingjavaguys.models.cmsmenu.CMSMenuCatagoryData;
 import com.beingjavaguys.models.cmsmenu.CMSMenuData;
+import com.beingjavaguys.models.cmsmenu.CMSMenuPriceData;
 
 public interface CMSMenuDao {
-	public int add(CMSMenuData cmsMenuData, HttpServletResponse response);
+	public int add(CMSMenuData cmsMenuData,
+			List<CMSMenuPriceData> cmsMenuPriceDataList,
+			HttpServletResponse response);
 
 	CMSMenuData get(int menuId);
 
@@ -20,7 +23,9 @@ public interface CMSMenuDao {
 	public List<Object> get(int limit, int pageno, CMSCooksData cmsCooksData,
 			CMSMenuCatagoryData cmsMenuCatagoryData);
 
-	public int edit(CMSMenuData cmsMenuData, HttpServletResponse response);
+	public int edit(CMSMenuData cmsMenuData,
+			List<CMSMenuPriceData> cmsMenuPriceDataList,
+			HttpServletResponse response);
 
 	public void delete(CMSMenuData cmsMenuData, HttpServletResponse response);
 
@@ -36,4 +41,8 @@ public interface CMSMenuDao {
 			CookSpecialityMenuData cookSpecialityMenuData);
 
 	public List<Object> getCooksOfItem(int limit, int pageno, String itemName);
+
+	public void deleteMenuPriceDataOnly(int menuId);
+	
+	public List<CMSMenuPriceData> getMenuPriceData(int menuId);
 }

@@ -80,9 +80,9 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 			cmsMenuPriceData.setPrice(cmsMenuPriceBean.getPrice());
 			cmsMenuPriceDataList.add(cmsMenuPriceData);
 		}
-		cmsMenuData.setCmsMenuPriceDataList(cmsMenuPriceDataList);
+		//cmsMenuData.setCmsMenuPriceDataList(cmsMenuPriceDataList);
 
-		return cmsMenuDao.add(cmsMenuData, response);
+		return cmsMenuDao.add(cmsMenuData,cmsMenuPriceDataList,response);
 	}
 
 	@Override
@@ -106,7 +106,10 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public BeanList get(int limit, int pageno, int cookId, int catagoryId,
-			HttpServletResponse response) {
+			HttpServletResponse response,String url) {
+		String contextPath = servletContext.getContextPath();
+	    String mainURL = (url.substring(0, url.indexOf(contextPath)))+(contextPath);
+	    
 		BeanList objectListBean = new BeanList();
 		List<CMSMenuPriceBean> cmsMenuPriceBeanList = null;
 		List<CMSMenuBean> cmsMenuBeanList = new ArrayList<CMSMenuBean>();
@@ -143,16 +146,17 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 				cmsMenuBean.setCmsMenuPriceBeanList(cmsMenuPriceBeanList);
 
 				String rootPath = servletContext.getRealPath("/");
-				String folderPath = rootPath + File.separator + "image"
+				String folderPath =   File.separator + "image"
 						+ File.separator + "menu_item" + File.separator;
 				String fileName = cmsMenuBean.getMenuImagePath();
 
 				if (fileName != null) {
-					File image = new File(folderPath + fileName);
+					File image = new File(rootPath + folderPath + fileName);
 					InputStream in = null;
 					try {
 						in = new FileInputStream(image);
-						cmsMenuBean.setImage(IOUtils.toByteArray(in));
+						//cmsMenuBean.setImage(IOUtils.toByteArray(in));
+						cmsMenuBean.setImageURL(mainURL + folderPath + fileName);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -176,7 +180,15 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 
 	@Override
 	public int edit(CMSMenuBean cmsMenuBean, HttpServletResponse response) {
-		CMSMenuData cmsMenuData = null;
+		//CMSMenuData cmsMenuData = null;
+		List<CMSMenuPriceData> cmsMenuPriceDataList = new ArrayList<CMSMenuPriceData>();
+		CMSMenuPriceData cmsMenuPriceData = null;
+		CMSMenuUnitData cmsMenuUnitData = null;
+		
+		CMSMenuData cmsMenuData = cmsMenuDao.get(cmsMenuBean.getId());
+		
+		cmsMenuDao.deleteMenuPriceDataOnly(cmsMenuBean.getId());
+		
 		cmsMenuData = cmsMenuUtility.populateCMSMenuData(cmsMenuBean);
 
 		CMSMenuCatagoryData cmsMenuCatagoryData = cmsMenuCatagoryDao.get(
@@ -186,8 +198,19 @@ public class CMSMenuServiceImpl implements CMSMenuService {
 		CMSCooksData cmsCooksData = cmsCooksDao.get(cmsMenuBean.getCooksId(),
 				response);
 		cmsMenuData.setCmsCooksData(cmsCooksData);
+		
+		for (CMSMenuPriceBean cmsMenuPriceBean : cmsMenuBean
+				.getCmsMenuPriceBeanList()) {
+			cmsMenuUnitData = cmsMenuUnitDao
+					.get(cmsMenuPriceBean.getUnitName());
+			cmsMenuPriceData = new CMSMenuPriceData();
+			cmsMenuPriceData.setCmsMenuUnitData(cmsMenuUnitData);
+			cmsMenuPriceData.setPrice(cmsMenuPriceBean.getPrice());
+			cmsMenuPriceDataList.add(cmsMenuPriceData);
+		}
+		//cmsMenuData.setCmsMenuPriceDataList(cmsMenuPriceDataList);
 
-		return cmsMenuDao.edit(cmsMenuData, response);
+		return cmsMenuDao.edit(cmsMenuData,cmsMenuPriceDataList,response);
 	}
 
 	@Override

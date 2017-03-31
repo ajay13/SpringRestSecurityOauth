@@ -18,7 +18,7 @@ public interface CMSMenuService {
 			HttpServletResponse response);
 
 	public BeanList get(int limit, int pageno, int cookId, int catagoryId,
-			HttpServletResponse response);
+			HttpServletResponse response,String url);
 
 	void delete(int id, HttpServletResponse response);
 

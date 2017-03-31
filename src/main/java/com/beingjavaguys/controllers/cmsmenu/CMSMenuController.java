@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,11 +89,12 @@ public class CMSMenuController {
 
 	@RequestMapping(value = "/menuList", method = RequestMethod.GET)
 	public @ResponseBody
-	BeanList get(HttpServletResponse response,
+	BeanList get(HttpServletResponse response,HttpServletRequest httpServletRequest,
 			@RequestParam(required = false) String limit,
 			@RequestParam(required = false) String pageno,
 			@RequestParam(required = false) String cookId,
 			@RequestParam(required = false) String catagoryId) {
+		String url = httpServletRequest.getRequestURL().toString();
 		int limitInt = 0, pagenoInt = 0;
 		int cook_id = 0, catagory_id = 0;
 		BeanList beanList = null;
@@ -130,7 +132,7 @@ public class CMSMenuController {
 			}
 
 			beanList = cmsMenuService.get(limitInt, pagenoInt, cook_id,
-					catagory_id, response);
+					catagory_id, response,url);
 		} catch (Exception e) {
 			response.setStatus(400);
 		}

@@ -22,6 +22,16 @@ public class CMSMenuBean {
 
 	private List<CMSMenuPriceBean> cmsMenuPriceBeanList;
 
+	private String imageURL;
+
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+
 	public String getItemName() {
 		return itemName;
 	}
